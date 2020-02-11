@@ -6,6 +6,7 @@ import zio.test._
 import zio.test.environment._
 import zio.test.Assertion._
 import zio.test.TestAspect.{ignore, timeout}
+import zio.test.mock.MockConsole._
 
 object WorkshopSpec
     extends DefaultRunnableSpec({
@@ -24,6 +25,30 @@ object WorkshopSpec
         testM("ErrorRecovery") {
           assertM(ErrorRecovery.run(Nil), equalTo(1))
         },
+        testM("Looping") {
+          for {
+            value <- Looping.run(Nil)
+            output <- TestConsole.output
+          } yield
+              assert(value, equalTo(0)) &&
+                assert(output.size, equalTo(102)) // (100 to 0) + 1`)`
+        },
+        testM("EffectConversion") {
+          for {
+            value <- EffectConversion.run(Nil)
+            output <- TestConsole.output
+          } yield
+              assert(value, equalTo(0)) &&
+                assert(output, equalTo(Vector())) // for Vector(), TestConsole cannot capture the original `println`
+        },
+        // not posible to test it with stdin
+        // testM("ErrorNarrowing") {
+        //   for {
+        //     value <- ErrorNarrowing.run(Nil)
+        //     output <- TestConsole.output
+        //   } yield
+        //       assert(value, equalTo(0))
+        // },
         testM("PromptName") {
           ZIO(assertCompletes)
         } @@ ignore,

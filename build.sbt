@@ -1,11 +1,13 @@
 val ZIOVersion = "1.0.0-RC17"
 
+val CatsVersion = "2.1.0"
+
 lazy val root = project
   .in(file("."))
   .settings(
     name := "zio-intro-game",
     organization := "net.degoes",
-    scalaVersion := "2.12.8",
+    scalaVersion := "2.12.10",
     initialCommands in Compile in console :=
       """|import zio._
          |import zio.console._
@@ -16,6 +18,8 @@ lazy val root = project
     """.stripMargin
   )
 
+addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
+
 addCommandAlias("fmt", "all scalafmtSbt scalafmt test:scalafmt")
 addCommandAlias(
   "check",
@@ -24,6 +28,7 @@ addCommandAlias(
 
 libraryDependencies ++= Seq(
   // ZIO
+  "org.typelevel" %% "cats-core" % CatsVersion,
   "dev.zio" %% "zio" % ZIOVersion,
   "dev.zio" %% "zio-streams" % ZIOVersion,
   "dev.zio" %% "zio-test" % ZIOVersion % "test",
